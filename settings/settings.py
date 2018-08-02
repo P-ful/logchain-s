@@ -29,5 +29,12 @@ class Settings:
     def all(self):
         return self._settings
 
+    def foo(self):
+        return self._foo
+    
     def get_storage_type(self)
         return self._settings["storage_type"]
+
+    @property
+    def network_interface_name(self):
+        return self._settings["network_interface_name"]
