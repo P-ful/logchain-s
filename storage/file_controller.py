@@ -6,8 +6,8 @@ import netifaces
 import logging
 from monitoring import monitoring
 from settings import Settings
-from storages.local import LocalDisk
-from storages.ftp import FtpDisk
+from storage.local import LocalDisk
+from storage.ftp import FtpDisk
 
 # database_path = os.path.dirname(
 #     os.path.dirname(__file__)) + '\_DataStorage' + '\\'
