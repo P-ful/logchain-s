@@ -5,23 +5,25 @@ import shutil
 import netifaces
 import logging
 from monitoring import monitoring
-
+from settings import Settings
+from storages.local import LocalDisk
+from storages.ftp import FtpDisk
 
 # database_path = os.path.dirname(
 #     os.path.dirname(__file__)) + '\_DataStorage' + '\\'
 
-database_path = os.getcwd() + os.sep + '_DataStorage' + os.sep
+database_path = Settings.get_instance().get_root_path() + '/_DataStorage/'
 
 
 # block_storage_path = os.path.dirname(
 #     os.path.dirname(__file__)) + '\_BlockStorage' + '\\'
 
 
-block_storage_path = os.getcwd() + os.sep + '_BlockStorage' + os.sep
+block_storage_path = Settings.get_instance().get_root_path() + '/_BlockStorage/'
 
 # voting_storage_path = os.path.dirname(
 #     os.path.dirname(__file__)) + '\_VotingStorage' + '\\'
-voting_storage_path = os.getcwd() + os.sep + '_VotingStorage' + os.sep
+voting_storage_path = Settings.get_instance().get_root_path() + '/_VotingStorage/'
 
 
 voting_info_file = 'Voting.txt'
@@ -32,46 +34,42 @@ block_file = "Block.txt"
 'File write and read function'
 
 
-def write(file_name, message):
+def create_storage_driver(type):
+    if (type == "local"):
+        return LocalDisk()
+    else:
+        return FtpDisk()
 
-    f = open(file_name, 'a')
-    f.write(message)
-    f.write('\n')
-    f.close()
 
+def append(file_name, message):
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    driver.append(file_name, message)
+
+def appendln(file_name, message):
+    write(file_name, message + "\n")
 
 def read_all_line(file_name):
-
-    f = open(file_name, 'r')
-    line_list = []
-    while True:
-        line = f.readline()
-        if not line:
-            break
-        else:
-            line_list.append(line)
-    f.close()
-    return line_list
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    return driver.read_all_line(file_name)
 
 
 'Add transaction, block, voting, node info'
 
 
 def add_transaction(trx):
-    write(database_path + ledger_file, trx)
+    append(database_path + ledger_file, trx)
 
 
 def add_block(block):
-    write(block_storage_path + block_file, block)
+    append(block_storage_path + block_file, block)
 
 
 def add_voting(trx):
-    write(voting_storage_path + voting_info_file, trx)
+    append(voting_storage_path + voting_info_file, trx)
 
 
 def add_node_info(node_info):
-    path_info = database_path + node_info_file
-    write(path_info, node_info)
+    append(database_path + node_info_file, node_info)
 
 
 
@@ -83,8 +81,8 @@ def get_my_ip():
 
 
 def get_my_ip_rpi():
-    netifaces.ifaddresses('wlan0')
-    ip = netifaces.ifaddresses('wlan0')[netifaces.AF_INET][0]['addr']
+    netifaces.ifaddresses('eth0')
+    ip = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
     monitoring.log("log.IP address:" + ip)
     return ip
 
@@ -105,48 +103,32 @@ def get_ip_list():
 
 
 def get_transaction_list():
-    line_list = read_all_line(database_path + ledger_file)
-    return line_list
+    return read_all_line(database_path + ledger_file)
 
 
 def get_voting_list():
-    voting_list = read_all_line(
-        voting_storage_path + voting_info_file)
-    return voting_list
-
+    return read_all_line(voting_storage_path + voting_info_file)
 
 def get_blockconfirm_list():
-    block_confirm_list = read_all_line(block_confirm_path + block_confirm_file)
-    return block_confirm_list
-
+    return read_all_line(block_confirm_path + block_confirm_file)
 
 def get_number_of_transactions():
     return len(get_transaction_list())
 
 
 def get_my_block():
-    f = open(block_storage_path + 'a_my_block', 'r')
-    block = f.read()
-    f.close()
-    return block
-
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    return driver.read(block_storage_path + 'a_my_block')
 
 def get_last_file():
-    import os
-    for root, dirs, files in os.walk(block_storage_path):
-        print
-    return files[-1]
-
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    return driver.listfiles(block_storage_path)[-1]
 
 def get_last_block():
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
 
-    block_list = []
-    block_list_size = 0
-
-    for (path, dir, files) in os.walk(block_storage_path):
-        block_list = files
-
-    block_list_size = len(files)
+    block_list = driver.listfiles(block_storage_path)
+    block_list_size = len(block_list)
 
     j = 0
     for i in block_list:
@@ -175,34 +157,29 @@ def get_block_height():
 
 
 def remove_all_transactions():
-    f = open(database_path + ledger_file, 'w')
-    f.write("")
-    f.close()
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    driver.write(database_path + ledger_file, "")
     monitoring.log('log.All transactions were removed.')
 
 
 def remove_all_voting():
-    f = open(voting_storage_path + voting_info_file, 'w')
-    f.write("")
-    f.close()
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    driver.write(voting_storage_path + voting_info_file, "")
     monitoring.log('log.The consensus related data has been deleted.')
 
 
 def remove_all_blocks():
     try:
-        shutil.rmtree(block_storage_path)
-        os.makedirs(block_storage_path)
+        driver = create_storage_driver(Settings.get_instance().get_storage_type())
+        driver.rmdir(block_storage_path)
+        driver.mkdir(block_storage_path)
         monitoring.log('log.All blocks were removed.')
     except Exception as e:
         print(e)
 
-
-
 def create_new_block(file_name, block_json):
-    f = open(block_storage_path + file_name, 'w')
-    f.write(block_json)
-    f.close()
-
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    driver.write(block_storage_path + file_name, block_json)
 
 def save_my_block(block_json):
     create_new_block('a_my_block', block_json)
