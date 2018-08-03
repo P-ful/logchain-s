@@ -1,4 +1,5 @@
 import os
+import shutil
 
 class LocalDisk:
     def append(self, file_name, message):
@@ -28,3 +29,9 @@ class LocalDisk:
                 line_list.append(line)
         f.close()
         return line_list
+
+    def rmdir(self, path):
+        shutil.rmtree(path)
+
+    def mkdir(self, path):
+        os.makedirs(path)
