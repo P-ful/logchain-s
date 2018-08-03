@@ -46,3 +46,6 @@ class Settings:
 
     def get_ftp_password(self):
         return self._settings["ftp_password"]
+
+    def get_network_interface_name(self):
+        return self._settings["network_interface_name"]
