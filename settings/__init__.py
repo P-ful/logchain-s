@@ -20,7 +20,7 @@ class Settings:
             Settings.__instance = self
 
     def load_settings(self):
-        with open("settings.json", "r") as json_data:
+        with open("/conf/settings.json", "r") as json_data:
             self._settings = json.load(json_data)
 
     def get(self, key):
