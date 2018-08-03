@@ -46,7 +46,7 @@ def append(file_name, message):
     driver.append(file_name, message)
 
 def appendln(file_name, message):
-    write(file_name, message + "\n")
+    append(file_name, message + "\n")
 
 def read_all_line(file_name):
     driver = create_storage_driver(Settings.get_instance().get_storage_type())
