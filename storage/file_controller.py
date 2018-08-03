@@ -14,7 +14,6 @@ from storage.ftp import FtpDisk
 
 database_path = Settings.get_instance().get_root_path() + '/_DataStorage/'
 
-
 # block_storage_path = os.path.dirname(
 #     os.path.dirname(__file__)) + '\_BlockStorage' + '\\'
 
@@ -24,7 +23,6 @@ block_storage_path = Settings.get_instance().get_root_path() + '/_BlockStorage/'
 # voting_storage_path = os.path.dirname(
 #     os.path.dirname(__file__)) + '\_VotingStorage' + '\\'
 voting_storage_path = Settings.get_instance().get_root_path() + '/_VotingStorage/'
-
 
 voting_info_file = 'Voting.txt'
 node_info_file = 'NodeInfo.txt'
@@ -45,8 +43,10 @@ def append(file_name, message):
     driver = create_storage_driver(Settings.get_instance().get_storage_type())
     driver.append(file_name, message)
 
+
 def appendln(file_name, message):
     append(file_name, message + "\n")
+
 
 def read_all_line(file_name):
     driver = create_storage_driver(Settings.get_instance().get_storage_type())
@@ -70,8 +70,6 @@ def add_voting(trx):
 
 def add_node_info(node_info):
     append(database_path + node_info_file, node_info)
-
-
 
 
 def get_my_ip():
@@ -110,8 +108,10 @@ def get_transaction_list():
 def get_voting_list():
     return read_all_line(voting_storage_path + voting_info_file)
 
+
 def get_blockconfirm_list():
     return read_all_line(block_confirm_path + block_confirm_file)
+
 
 def get_number_of_transactions():
     return len(get_transaction_list())
@@ -121,14 +121,16 @@ def get_my_block():
     driver = create_storage_driver(Settings.get_instance().get_storage_type())
     return driver.read(block_storage_path + 'a_my_block')
 
+
 def get_last_file():
     driver = create_storage_driver(Settings.get_instance().get_storage_type())
     return driver.listfiles(block_storage_path)[-1]
 
+
 def get_last_block():
     driver = create_storage_driver(Settings.get_instance().get_storage_type())
 
-    block_list = driver.listfiles(block_storage_path)
+    block_list = driver.list_files(block_storage_path)
     block_list_size = len(block_list)
 
     j = 0
@@ -139,7 +141,7 @@ def get_last_block():
     # last_block_file_name = block_list[-1]
     last_block_file_name = str(block_list_size)
 
-    monitoring.log("log.last_block_file_name is .. "+ last_block_file_name)
+    monitoring.log("log.last_block_file_name is .. " + last_block_file_name)
 
     # monitoring.log("log."+last_block_file_name+type(last_block_file_name))
 
@@ -152,9 +154,8 @@ def get_last_block():
 
 
 def get_block_height():
-    return len(os.walk(block_storage_path).next()[2])
-
-
+    driver = create_storage_driver(Settings.get_instance().get_storage_type())
+    return len(driver.list_files(block_storage_path))
 
 
 def remove_all_transactions():
@@ -178,9 +179,11 @@ def remove_all_blocks():
     except Exception as e:
         print(e)
 
+
 def create_new_block(file_name, block_json):
     driver = create_storage_driver(Settings.get_instance().get_storage_type())
     driver.write(block_storage_path + file_name, block_json)
+
 
 def save_my_block(block_json):
     create_new_block('a_my_block', block_json)

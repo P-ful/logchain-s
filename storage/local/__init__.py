@@ -35,3 +35,8 @@ class LocalDisk:
 
     def mkdir(self, path):
         os.makedirs(path)
+
+    def list_files(self, path):
+        for root, dirs, files in os.walk(path):
+            print
+        return files[-1]
