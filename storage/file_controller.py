@@ -81,7 +81,7 @@ def get_my_ip():
 
 
 def get_my_ip_rpi():
-    interface_name = Settings.get_instance().network_interface_name
+    interface_name = Settings.get_instance().get_network_interface_name()
     netifaces.ifaddresses(interface_name)
     ip = netifaces.ifaddresses(interface_name)[netifaces.AF_INET][0]['addr']
     monitoring.log("log.IP address:" + ip)
