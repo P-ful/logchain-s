@@ -9,7 +9,7 @@ from communication.p2p import sender
 from peerproperty import set_peer
 from monitoring import monitoring
 
-with open(os.getcwd() + os.sep + 'peerconnector.json', 'r') as f:
+with open('/conf/peerconnector.json', 'r') as f:
     peerconnector_config = json.load(f)
 
 # TODO: There are several PeerMgr candidates, of which PeerMgr succeeded first in PeerMgr process execution becomes final PeerMgr. If the PeerMgr node fails to run, the other candidate nodes attempt to run PeerMgr process.

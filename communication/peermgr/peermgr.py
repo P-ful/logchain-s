@@ -10,7 +10,7 @@ import os
 from monitoring import monitoring
 
 
-with open(os.getcwd() + os.sep + "peermgr.json", 'r') as f:
+with open(os.getcwd() + os.sep + "/conf/peermgr.json", 'r') as f:
     peermgr_config = json.load(f)
 
 peermgr_ID = peermgr_config['PEER_MGR']['ID']
