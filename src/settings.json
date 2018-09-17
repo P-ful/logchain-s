@@ -1,0 +1,9 @@
+{
+	"storage_type": "local",
+	"root_path": "P:/logchain-s-master/src",
+	"ftp_address": "",
+	"ftp_port": 21,
+	"ftp_account": "",
+	"ftp_password": "",
+	"network_interface_name": "eth0"
+}
