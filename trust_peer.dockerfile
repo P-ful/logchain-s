@@ -1,6 +1,6 @@
 FROM pful/python-ubuntu-xenial:3.6
 
-RUN apt update -y && \
+RUN apt update && \
     apt install -y libgl1-mesa-dev
 
 RUN pip install flask && \

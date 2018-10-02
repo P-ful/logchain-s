@@ -1,0 +1,8 @@
+.idea
+.git
+.gitignore
+confs/
+venv/
+run.bat
+*.dockerignore
+docker_commands.txt

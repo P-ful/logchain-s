@@ -1,12 +1,12 @@
 FROM pful/python-ubuntu-xenial:3.6
 
-RUN apt update 
-RUN apt install -y libgl1-mesa-dev
+RUN apt update && \
+    apt install -y libgl1-mesa-dev
 
-RUN pip install flask & \
+RUN pip install flask && \
 	pip install PyQt5
 
-RUN git clone --branch 0.1 https://github.com/P-ful/logchain-s.git /logchain
+COPY ./src /logchain
 
 RUN mkdir /conf
 WORKDIR /logchain

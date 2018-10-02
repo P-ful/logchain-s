@@ -13,3 +13,6 @@ sudo docker run --name generic-node2 -d -v P:/logchain-s/confs/generic2:/conf --
 
 docker run --rm -it --net logchainnet --ip 172.18.0.43 ubuntu:16.04
 wget 172.18.0.32:5000
+
+# getting transactions from trust nodes
+wget http://x.x.x.x:5000/info/tx
